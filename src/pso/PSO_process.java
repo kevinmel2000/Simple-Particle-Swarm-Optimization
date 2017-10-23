@@ -45,6 +45,7 @@ public class PSO_process {
         aParticle[0] = new particle(nSolution);
           Initialization();  
           
+          System.out.print("ini partikel di awal iterasi = \n ");
           for (int i = 0; i < population; i++) {
             System.out.print("P["+i+"]");
               for (int j = 0; j < nSolution; j++) {
@@ -60,8 +61,6 @@ public class PSO_process {
                     do{
                         for(int i = 0; i < population; i++)
                          {
-                               
-                                System.out.print(testProblem(i)+ "\n");
                                 if(testProblem(i) == target){
                                     done = true;
                                 }
@@ -82,13 +81,13 @@ public class PSO_process {
                        }while(done!=true);
                   
               }
-              
-        printSolution();
+         
+       printSolution();
           
     }
      private  void getVelocity(int gBestindex)
     {
-        //  from Kennedy & Eberhart(1995).
+        //  refrensi Kennedy & Eberhart(1995).
         //    vx[][] = vx[][] + 2 * rand() * (pbestx[][] - presentx[][]) + 
         //                      2 * rand() * (pbestx[][gbest] - presentx[][])
 
@@ -146,7 +145,6 @@ public class PSO_process {
     
     private  int minimum()
     {
-    // Returns an array index.
         int winner = 0;
         boolean foundNewWinner = false;
         boolean done = false;
@@ -156,8 +154,7 @@ public class PSO_process {
             foundNewWinner = false;
             for(int i = 0; i < population; i++)
             {
-                if(i != winner){             // Avoid self-comparison.
-                    // The minimum has to be in relation to the Target.
+                if(i != winner){            
                     if(Math.abs(target - testProblem(i)) < Math.abs(target - testProblem(winner))){
                         winner = i;
                         foundNewWinner = true;
@@ -219,7 +216,6 @@ public class PSO_process {
     
     private  void printSolution()
     {
-        // Find solution particle.
         int i = 0;
         for(; i < population; i++)
         {
@@ -227,7 +223,6 @@ public class PSO_process {
                 break;
             }
         }
-        // Print it.
         System.out.println("Particle " + i + " menemukan solusi ");
         for(int j = 0; j < nSolution; j++)
         {
