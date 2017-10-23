@@ -10,14 +10,16 @@ package pso;
  * @author Nanda-PC
  */
 public class particle {
-    double[] particleVector;
+    int[] particleVector;
     double fitness;
+    private double mVelocity = 0.0;
     
     public particle(int nSolution){
-        particleVector= new double[nSolution];
+        particleVector= new int[nSolution];
+         this.mVelocity = 0.0;
     }
     
-    public void setParticle(int index, double solution){
+    public void setParticle(int index, int solution){
         particleVector[index]= solution;
     }
     
@@ -25,13 +27,24 @@ public class particle {
         this.fitness= fitness;
     }
     
-    public double getParticleVector(int index){
+    public int getParticleVector(int index){
         return particleVector[index];
     }
     
     public double getFitness(){
         return fitness;
     }
+     public double velocity()
+     {
+            return this.mVelocity;
+     }
+        
+    public void velocity(double velocityScore)
+     {
+           this.mVelocity = velocityScore;
+           return;
+     }
+    
     
     
 }
