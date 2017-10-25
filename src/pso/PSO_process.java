@@ -17,7 +17,7 @@ public class PSO_process {
     int currentBestIndex;
     particle[] Particle;
     particle[] aParticle;
-     
+    particle[] bestParticle;
 
     
     public PSO_process(){
@@ -40,54 +40,99 @@ public class PSO_process {
         int gBestTest = 0;
         int epoch = 0;
         boolean done = false; 
+        boolean check = false;
+       
        
         aParticle = new particle[1];
         aParticle[0] = new particle(nSolution);
+        
+        bestParticle = new particle[1];
+        bestParticle[0] = new particle(nSolution);
           Initialization();  
           
-          System.out.print("ini partikel di awal iterasi = \n ");
-          for (int i = 0; i < population; i++) {
-            System.out.print("P["+i+"]");
-              for (int j = 0; j < nSolution; j++) {
-                  System.out.print(Particle[i].getParticleVector(j)+",");
-              }
-             System.out.print('\n');
-        }
-          
-          
-         
-              if (epoch < iteration) {
- 
-                    do{
-                        for(int i = 0; i < population; i++)
-                         {
-                                if(testProblem(i) == target){
-                                    done = true;
-                                }
-                          }
-                          
-                           for (int j = 0; j < nSolution; j++) {
-                               int fitness = Particle[gBest].getParticleVector(j);
-                               aParticle[0].setParticle(j, fitness);  
+   
+                    do{  
+                                for(int i = 0; i < population; i++)
+                                 {
+                                        if(testProblem(i) == target  ){
+                                            done = true;
+                                            check = true ; //artinya dapat solusi 
+                                           
+                                        }
+                                        if (epoch == iteration && done== false) {
+                                           done = true;
+                                           check = false; //artinya tdk dapat solusi
+                                       }
+                                      
+                                  }
 
-                               }
-                           if(Math.abs(target - testProblem(gBestTest)) < Math.abs(target - testProblem(gBest))){
-                              gBest = gBestTest;
-                          }
+                                   for (int j = 0; j < nSolution; j++) {
+                                       int fitness = Particle[gBest].getParticleVector(j);
+                                       aParticle[0].setParticle(j, fitness);  
 
-                           getVelocity(gBest);
-                           updateparticles(gBest);
-                           epoch++;
-                       }while(done!=true);
-                  
-              }
-         
-       printSolution();
-          
+                                       }
+                                   if(Math.abs(target - testProblem(gBestTest)) < Math.abs(target - testProblem(gBest))){
+                                      gBest = gBestTest;
+                                  }
+
+                                   System.out.print("ini adalah iterasi ke : "+epoch +"\n");
+                                   for (int i = 0; i < population; i++) {
+                                        System.out.print("P["+i+"]");
+                                          for (int j = 0; j < nSolution; j++) {
+                                              System.out.print(Particle[i].getParticleVector(j)+" ");
+                                          }
+                                          Particle[i].setFitness(testProblem(i)); //mengeset fungsi objektif
+                                         System.out.print("f(x)= " + testProblem(i));
+                                         System.out.print('\n');
+                                    }
+                                   
+                                   System.out.print(check+","+done);
+                                   System.out.print("============================\n");
+                                   
+                                   if (check==false) { // agar nilai akhir tidak berubah, jika check belum terpenuhi ,maka akan terus update gbest dan velocity sampai iterasi terakhir
+                                        getVelocity(gBest);
+                                        updateparticles(gBest);
+                                   }
+                                   epoch++;
+                       }while(done!=true && epoch <= iteration);    
+              
+              
+           if (check==false) {
+                  System.out.print("tdk ditemukan solusi");
+            }
+           else{
+                 checkResult(epoch-1);
+           }
+       
+        
     }
+    
+    private void checkResult(int currentEpoch){
+        int[] temp = new int[population];
+         System.out.print("Solusi ditemukan pada epoch ke "+currentEpoch+"\n");
+        for (int i = 0; i < population; i++) {
+            for (int j = 0; j < nSolution; j++) {
+                if (testProblem(i)==target) {
+                    temp[i]=1;
+                }
+            }
+        }
+        
+        for (int i = 0; i < population; i++) {
+            if (temp[i]==1) {
+                   System.out.print("pada P["+i+"]");
+                    for (int j = 0; j < nSolution; j++) {
+                        System.out.print(Particle[i].getParticleVector(j)+",");
+                     }
+                     System.out.print("dengan f(x)="+Particle[i].getFitness()+"\n");
+                }
+           
+        }
+    }
+    
      private  void getVelocity(int gBestindex)
     {
-        //  refrensi Kennedy & Eberhart(1995).
+        //  refrensi dari Kennedy & Eberhart(1995).
         //    vx[][] = vx[][] + 2 * rand() * (pbestx[][] - presentx[][]) + 
         //                      2 * rand() * (pbestx[][gbest] - presentx[][])
 
@@ -110,7 +155,6 @@ public class PSO_process {
                 aParticle[0].velocity(vValue);
             }
         }
-        return;
     }
      
     private void Initialization(){
@@ -128,17 +172,15 @@ public class PSO_process {
             int total = 0;
             for(int j = 0; j < nSolution; j++)
             {
-//                newParticle.data(j, getRandomNumber(START_RANGE_MIN, START_RANGE_MAX));
-//                total += newParticle.data(j);
                 Particle[i].setParticle(j, getRandomNumber(minrange, maxrange));
                 total += Particle[i].getParticleVector(j);
             } 
               Particle[i].setFitness(total);
-        } // i
+        }
       
     }
     
-    private static int getRandomNumber(int low, int high)
+    private  int getRandomNumber(int low, int high)
     {
         return (int)((high - low) * new Random().nextDouble() + low);
     }
@@ -201,43 +243,17 @@ public class PSO_process {
                     Particle[i].setParticle(j, Particle[i].getParticleVector(j) + (int)Math.round(Particle[i].velocity()));
                 }
                 
-            } // j
+            }
 
-            // Check pBest value.
+            // Check Nilai pBest
             int total = testProblem(i);
             
             if (Math.abs(target-total)< Particle[i].getFitness()) {
                 Particle[i].getFitness();
             }
 
-        } // i
-        return;
+        } 
     }
-    
-    private  void printSolution()
-    {
-        int i = 0;
-        for(; i < population; i++)
-        {
-            if(testProblem(i) == target){
-                break;
-            }
-        }
-        System.out.println("Particle " + i + " menemukan solusi ");
-        for(int j = 0; j < nSolution; j++)
-        {
-            if(j < nSolution - 1){
-               
-                int data= Particle[i].getParticleVector(j);
-                System.out.print(data + " + ");
-            }else{
-                
-                int data = Particle[i].getParticleVector(j);
-                System.out.print(data+" = " + target);
-            }
-        } // j
-        System.out.print("\n");
-        return;
-    }
+   
     
 }
