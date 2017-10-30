@@ -48,7 +48,7 @@ public class PSO_process {
         
         bestParticle = new particle[1];
         bestParticle[0] = new particle(nSolution);
-          Initialization();  
+        Initialization();  
           
    
                     do{  
@@ -71,9 +71,15 @@ public class PSO_process {
                                        aParticle[0].setParticle(j, fitness);  
 
                                        }
+                                     gBestTest = minimum();
+                                      aParticle[0]= Particle[gBest];
+                                   
+                                   System.out.print("gbesttest="+gBestTest+",gbest= "+gBest);
+                                   
                                    if(Math.abs(target - testProblem(gBestTest)) < Math.abs(target - testProblem(gBest))){
                                       gBest = gBestTest;
                                   }
+                                   
 
                                    System.out.print("ini adalah iterasi ke : "+epoch +"\n");
                                    for (int i = 0; i < population; i++) {
@@ -95,8 +101,6 @@ public class PSO_process {
                                    }
                                    epoch++;
                        }while(done!=true && epoch <= iteration);    
-              
-              
            if (check==false) {
                   System.out.print("tdk ditemukan solusi");
             }
@@ -130,8 +134,7 @@ public class PSO_process {
         }
     }
     
-     private  void getVelocity(int gBestindex)
-    {
+    private  void getVelocity(int gBestindex){
         //  refrensi dari Kennedy & Eberhart(1995).
         //    vx[][] = vx[][] + 2 * rand() * (pbestx[][] - presentx[][]) + 
         //                      2 * rand() * (pbestx[][gbest] - presentx[][])
@@ -156,7 +159,7 @@ public class PSO_process {
             }
         }
     }
-     
+    
     private void Initialization(){
         Particle = new particle[population];
       
@@ -179,14 +182,12 @@ public class PSO_process {
         }
       
     }
-    
-    private  int getRandomNumber(int low, int high)
-    {
+  
+    private  int getRandomNumber(int low, int high){
         return (int)((high - low) * new Random().nextDouble() + low);
     }
     
-    private  int minimum()
-    {
+    private  int minimum(){
         int winner = 0;
         boolean foundNewWinner = false;
         boolean done = false;
@@ -212,8 +213,7 @@ public class PSO_process {
         return winner;
     }
     
-     private  int testProblem(int index)
-    {
+    private  int testProblem(int index) {
         int total = 0;
       
 
@@ -224,8 +224,7 @@ public class PSO_process {
         return total;
     }
      
-    private  void updateparticles(int gBestindex)
-    {
+    private  void updateparticles(int gBestindex){
         particle[] gBParticle;
         gBParticle  = new particle[1];
         gBParticle[0] = new particle(nSolution);

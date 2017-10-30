@@ -42,7 +42,7 @@ public class particle {
     public void velocity(double velocityScore)
      {
            this.mVelocity = velocityScore;
-           return;
+         
      }
     
     
