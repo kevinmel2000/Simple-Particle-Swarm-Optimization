@@ -160,6 +160,8 @@ public class PSO_process {
         }
     }
     
+    
+    
     private void Initialization(){
         Particle = new particle[population];
       
